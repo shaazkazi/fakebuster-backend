@@ -8,7 +8,12 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['https://fakebuster.netlify.app', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 app.use(express.json());
 
 // Cloudinary configuration
@@ -31,8 +36,10 @@ app.get('/', (req, res) => {
 // Routes
 const newsRoutes = require('./routes/news');
 const authRoutes = require('./routes/auth');
+const auth = require('./middleware/auth');
 
-app.use('/api/news', newsRoutes);
+// Route configurations
+app.use('/api/news', auth, newsRoutes);
 app.use('/api/auth', authRoutes);
 
 const PORT = process.env.PORT || 5000;
